@@ -13,6 +13,10 @@ public class PlayerController : MonoBehaviour
     public float yLookLockUp = -70f;
     public float yLookLockDown = 80f;
 
+    public float normalCameraPosY = 0.5f;
+    public float crouchCameraPosY = -0.25f;
+    public float crouchSpeed;
+
     private float xRot = 0f;
     private float yRot = 0f;
 
@@ -43,5 +47,14 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, Mathf.LerpAngle(transform.rotation.eulerAngles.y, xRot, lerpSpeed * Time.deltaTime), 0f);
 
         rb.velocity = Vector3.Lerp(rb.velocity, movement, Time.deltaTime * movementLerpSpeed);
+    
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            Camera.main.transform.localPosition = new Vector3(0f, Mathf.Lerp(Camera.main.transform.localPosition.y, crouchCameraPosY, Time.deltaTime * crouchSpeed), 0f);
+        }
+        else
+        {
+            Camera.main.transform.localPosition = new Vector3(0f, Mathf.Lerp(Camera.main.transform.localPosition.y, normalCameraPosY, Time.deltaTime * crouchSpeed), 0f);
+        }
     }
 }

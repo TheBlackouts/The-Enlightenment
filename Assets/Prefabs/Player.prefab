@@ -119,6 +119,9 @@ MonoBehaviour:
   movementLerpSpeed: 6
   yLookLockUp: -70
   yLookLockDown: 80
+  normalCameraPosY: 0.5
+  crouchCameraPosY: -0.25
+  crouchSpeed: 4.77
 --- !u!54 &6065502190292463845
 Rigidbody:
   m_ObjectHideFlags: 0
