@@ -7,18 +7,20 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     public float movementSpeed;
     public float mouseSensitivity;
-    public float lerpSpeed;
-    public float movementLerpSpeed;
+    public float lookSmoothing;
+    public float movementSmoothing;
 
-    public float yLookLockUp = -70f;
-    public float yLookLockDown = 80f;
+    public float yLookUpLock = -70f;
+    public float yLookDownLock = 80f;
 
     public float normalCameraPosY = 0.5f;
     public float crouchCameraPosY = -0.25f;
-    public float crouchSpeed;
+    public float crouchSmoothing;
 
-    private float xRot = 0f;
-    private float yRot = 0f;
+    private float xLookRot = 0f;
+    private float yLookRot = 0f;
+
+    private Transform camT;
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +28,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
+        camT = Camera.main.transform;
     }
 
     // Update is called once per frame
@@ -34,27 +37,27 @@ public class PlayerController : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        xRot += Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        yRot += Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        xLookRot += Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        yLookRot += Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        yRot = Mathf.Clamp(yRot, yLookLockUp, yLookLockDown);
+        yLookRot = Mathf.Clamp(yLookRot, yLookUpLock, yLookDownLock);
 
-        Vector3 movement = transform.right * horizontal + transform.forward * vertical;
+        Vector3 movement = (transform.right * horizontal) + (transform.forward * vertical);
         movement = movement.normalized * movementSpeed;
         movement = new Vector3(movement.x, 0f, movement.z);
 
-        Camera.main.transform.localRotation = Quaternion.Euler(Mathf.LerpAngle(Camera.main.transform.rotation.eulerAngles.x, -yRot, Mathf.Clamp01(lerpSpeed * Time.deltaTime)), 0f, 0f);
-        transform.rotation = Quaternion.Euler(0f, Mathf.LerpAngle(transform.rotation.eulerAngles.y, xRot, lerpSpeed * Time.deltaTime), 0f);
+        camT.localRotation = Quaternion.Euler(Mathf.LerpAngle(camT.rotation.eulerAngles.x, -yLookRot, lookSmoothing * Time.deltaTime), 0f, 0f);
+        transform.rotation = Quaternion.Euler(0f, Mathf.LerpAngle(transform.rotation.eulerAngles.y, xLookRot, lookSmoothing * Time.deltaTime), 0f);
 
-        rb.velocity = Vector3.Lerp(rb.velocity, movement, Time.deltaTime * movementLerpSpeed);
+        rb.velocity = Vector3.Lerp(rb.velocity, movement, Time.deltaTime * movementSmoothing);
     
         if (Input.GetKey(KeyCode.LeftControl))
         {
-            Camera.main.transform.localPosition = new Vector3(0f, Mathf.Lerp(Camera.main.transform.localPosition.y, crouchCameraPosY, Time.deltaTime * crouchSpeed), 0f);
+            camT.localPosition = new Vector3(0f, Mathf.Lerp(camT.localPosition.y, crouchCameraPosY, Time.deltaTime * crouchSmoothing), 0f);
         }
         else
         {
-            Camera.main.transform.localPosition = new Vector3(0f, Mathf.Lerp(Camera.main.transform.localPosition.y, normalCameraPosY, Time.deltaTime * crouchSpeed), 0f);
+            camT.localPosition = new Vector3(0f, Mathf.Lerp(camT.localPosition.y, normalCameraPosY, Time.deltaTime * crouchSmoothing), 0f);
         }
     }
 }
