@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
     public float lookSmoothing;
     public float movementSmoothing;
 
-    public float yLookUpLock = -70f;
-    public float yLookDownLock = 80f;
+    public float yLookUpLock = -70f; //desired X rotation of the PlayerModell
+    public float yLookDownLock = 80f; //desired Y rotation of the Camera
 
     public float normalCameraPosY = 0.5f;
     public float crouchCameraPosY = -0.25f;
@@ -42,14 +42,14 @@ public class PlayerController : MonoBehaviour
 
         yLookRot = Mathf.Clamp(yLookRot, yLookUpLock, yLookDownLock);
 
-        Vector3 movement = (transform.right * horizontal) + (transform.forward * vertical);
+        Vector3 movement = (transform.right * horizontal) + (transform.forward * vertical); //get the Base moving direction by saying in which directions we want to move (forward and left or forward and right...)
         movement = movement.normalized * movementSpeed;
         movement = new Vector3(movement.x, 0f, movement.z);
 
         camT.localRotation = Quaternion.Euler(Mathf.LerpAngle(camT.rotation.eulerAngles.x, -yLookRot, lookSmoothing * Time.deltaTime), 0f, 0f);
         transform.rotation = Quaternion.Euler(0f, Mathf.LerpAngle(transform.rotation.eulerAngles.y, xLookRot, lookSmoothing * Time.deltaTime), 0f);
 
-        rb.velocity = Vector3.Lerp(rb.velocity, movement, Time.deltaTime * movementSmoothing);
+        rb.velocity = Vector3.Lerp(rb.velocity, movement, Time.deltaTime * movementSmoothing); //The Vector movement is our desired Velocity so we smooth ourselves to that velocity from our current Velocity
     
         if (Input.GetKey(KeyCode.LeftControl))
         {
