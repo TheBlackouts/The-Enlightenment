@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     public float lerpSpeed;
     public float movementLerpSpeed;
 
+    public float yLookLockUp = -70f;
+    public float yLookLockDown = 80f;
+
     private float xRot = 0f;
     private float yRot = 0f;
 
@@ -30,7 +33,7 @@ public class PlayerController : MonoBehaviour
         xRot += Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         yRot += Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        
+        yRot = Mathf.Clamp(yRot, yLookLockUp, yLookLockDown);
 
         Vector3 movement = transform.right * horizontal + transform.forward * vertical;
         movement = movement.normalized * movementSpeed;
